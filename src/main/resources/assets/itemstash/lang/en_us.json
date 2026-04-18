@@ -1,0 +1,11 @@
+{
+  "key.itemstash.open": "Open Itemstash",
+  "category.itemstash": "Itemstash",
+  "key.category.itemstash.itemstash": "Itemstash",
+  "screen.itemstash.title": "Itemstash",
+  "screen.itemstash.empty": "Your stash is empty.",
+  "screen.itemstash.take_stack": "Take Stack",
+  "screen.itemstash.fill_inventory": "Fill Inventory",
+  "screen.itemstash.drop_all": "Drop All",
+  "screen.itemstash.count": "x%s"
+}

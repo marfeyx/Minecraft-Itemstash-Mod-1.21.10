@@ -1,0 +1,10 @@
+.gradle/
+.gradle-local/
+.jdks/
+build/
+run/
+out/
+
+*.class
+*.log
+*.tmp

@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "itemstash",
+  "version": "${version}",
+  "name": "Itemstash",
+  "description": "Stores item pickups in a virtual stash when your inventory is full.",
+  "authors": [
+    "marfeyx"
+  ],
+  "contact": {},
+  "license": "MIT",
+  "icon": "assets/itemstash/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.marfeyx.itemstash.Itemstash"
+    ],
+    "client": [
+      "com.marfeyx.itemstash.client.ItemstashClient"
+    ]
+  },
+  "mixins": [
+    "itemstash.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.17.3",
+    "minecraft": "~1.21.10",
+    "java": ">=21",
+    "fabric-api": "*"
+  }
+}
