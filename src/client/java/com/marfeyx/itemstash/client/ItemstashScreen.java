@@ -14,6 +14,13 @@ public class ItemstashScreen extends Screen {
     private static final int ROW_HEIGHT = 32;
     private static final int BUTTON_WIDTH = 76;
     private static final int BUTTON_HEIGHT = 20;
+    private static final int TEXT_WHITE = 0xFFFFFFFF;
+    private static final int TEXT_MUTED = 0xFFA0A0A0;
+    private static final int TEXT_COUNT = 0xFFA0FFA0;
+    private static final int SCREEN_OVERLAY = 0x99000000;
+    private static final int PANEL_BACKGROUND = 0xCC101010;
+    private static final int PANEL_BORDER = 0xFF6F6F6F;
+    private static final int ROW_BACKGROUND = 0x66000000;
 
     private final List<ItemstashEntry> entries;
     private int scrollOffset;
@@ -57,15 +64,19 @@ public class ItemstashScreen extends Screen {
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
-        renderBackground(context, mouseX, mouseY, deltaTicks);
+        context.fill(0, 0, width, height, SCREEN_OVERLAY);
 
         int left = (width - PANEL_WIDTH) / 2;
         int top = 42;
-        context.drawText(textRenderer, title, left, top, 0xFFFFFF, false);
+        int panelHeight = Math.min(height - top * 2, 42 + visibleRows() * ROW_HEIGHT);
+
+        context.fill(left - 12, top - 12, left + PANEL_WIDTH + 12, top + panelHeight, PANEL_BACKGROUND);
+        drawBorder(context, left - 12, top - 12, PANEL_WIDTH + 24, panelHeight + 12);
+        context.drawText(textRenderer, title, left, top, TEXT_WHITE, false);
 
         if (entries.isEmpty()) {
             Text empty = Text.translatable("screen.itemstash.empty");
-            context.drawText(textRenderer, empty, (width - textRenderer.getWidth(empty)) / 2, height / 2, 0xA0A0A0, false);
+            context.drawText(textRenderer, empty, (width - textRenderer.getWidth(empty)) / 2, height / 2, TEXT_MUTED, false);
             super.render(context, mouseX, mouseY, deltaTicks);
             return;
         }
@@ -80,9 +91,10 @@ public class ItemstashScreen extends Screen {
             ItemstashEntry entry = entries.get(entryIndex);
             int y = top + 28 + row * ROW_HEIGHT;
 
+            context.fill(left - 4, y + 2, left + PANEL_WIDTH + 4, y + ROW_HEIGHT - 2, ROW_BACKGROUND);
             context.drawItem(entry.stack(), left, y + 7);
-            context.drawText(textRenderer, entry.stack().getName(), left + 24, y + 6, 0xFFFFFF, false);
-            context.drawText(textRenderer, Text.translatable("screen.itemstash.count", entry.count()), left + 24, y + 18, 0xA0FFA0, false);
+            context.drawText(textRenderer, entry.stack().getName(), left + 24, y + 6, TEXT_WHITE, false);
+            context.drawText(textRenderer, Text.translatable("screen.itemstash.count", entry.count()), left + 24, y + 18, TEXT_COUNT, false);
         }
 
         super.render(context, mouseX, mouseY, deltaTicks);
@@ -118,6 +130,13 @@ public class ItemstashScreen extends Screen {
 
     private int maxScrollOffset() {
         return Math.max(0, entries.size() - visibleRows());
+    }
+
+    private void drawBorder(DrawContext context, int x, int y, int width, int height) {
+        context.fill(x, y, x + width, y + 1, PANEL_BORDER);
+        context.fill(x, y + height - 1, x + width, y + height, PANEL_BORDER);
+        context.fill(x, y, x + 1, y + height, PANEL_BORDER);
+        context.fill(x + width - 1, y, x + width, y + height, PANEL_BORDER);
     }
 
     private void sendAction(int index, String action) {

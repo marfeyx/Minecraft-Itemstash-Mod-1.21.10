@@ -18,7 +18,7 @@ public final class ItemPickupStasher {
     }
 
     private static boolean canAcceptAny(PlayerInventory inventory, ItemStack incoming) {
-        for (int slot = 0; slot < inventory.size(); slot++) {
+        for (int slot = 0; slot < PlayerInventory.MAIN_SIZE; slot++) {
             ItemStack current = inventory.getStack(slot);
 
             if (current.isEmpty()) {
