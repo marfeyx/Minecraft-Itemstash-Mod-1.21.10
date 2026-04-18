@@ -48,6 +48,16 @@ public final class ItemstashInventory {
         stacks.add(incoming.copy());
     }
 
+    public void copyFrom(ItemstashInventory other) {
+        stacks.clear();
+
+        for (ItemStack stack : other.stacks) {
+            if (!stack.isEmpty()) {
+                stacks.add(stack.copy());
+            }
+        }
+    }
+
     public boolean takeStack(ServerPlayerEntity player, int index) {
         return moveToInventory(player, index, false);
     }
