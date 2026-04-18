@@ -8,8 +8,10 @@ import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.storage.ReadView;
 import net.minecraft.storage.WriteView;
+import net.minecraft.util.math.Vec3d;
 
 public final class ItemstashInventory {
     private static final String NBT_KEY = "ItemstashItems";
@@ -57,19 +59,49 @@ public final class ItemstashInventory {
     public boolean dropAll(ServerPlayerEntity player, int index) {
         ItemStack stack = get(index);
 
-        if (stack.isEmpty()) {
+        if (stack.isEmpty() || !(player.getEntityWorld() instanceof ServerWorld world)) {
             return false;
         }
 
-        ItemStack dropped = stack.copy();
-        stacks.remove(index);
-        ItemEntity entity = player.dropItem(dropped, false, true);
+        int remaining = stack.getCount();
+        boolean droppedAny = false;
 
-        if (entity != null) {
+        while (remaining > 0) {
+            int amount = Math.min(stack.getMaxCount(), remaining);
+            ItemStack dropped = stack.copyWithCount(amount);
+            ItemEntity entity = createDroppedItem(player, world, dropped);
+
             entity.setOwner(player.getUuid());
+            entity.setThrower(player);
+            entity.setToDefaultPickupDelay();
+
+            if (!world.spawnEntity(entity)) {
+                break;
+            }
+
+            remaining -= amount;
+            droppedAny = true;
+        }
+
+        if (!droppedAny) {
+            return false;
+        }
+
+        if (remaining <= 0) {
+            stacks.remove(index);
+        } else {
+            stack.setCount(remaining);
         }
 
         return true;
+    }
+
+    private ItemEntity createDroppedItem(ServerPlayerEntity player, ServerWorld world, ItemStack stack) {
+        Vec3d look = player.getRotationVec(1.0F).normalize();
+        Vec3d pos = player.getEyePos().add(look.multiply(0.9D)).add(0.0D, -0.25D, 0.0D);
+        Vec3d velocity = look.multiply(0.35D).add(0.0D, 0.12D, 0.0D);
+
+        return new ItemEntity(world, pos.x, pos.y, pos.z, stack, velocity.x, velocity.y, velocity.z);
     }
 
     public void readData(ReadView view) {

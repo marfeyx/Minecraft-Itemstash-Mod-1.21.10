@@ -12,6 +12,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ItemEntity.class)
 public abstract class ItemEntityMixin {
+    private static final int PLAYER_DROPPED_STASH_DELAY_TICKS = 15 * 20;
+
     @Shadow
     public abstract net.minecraft.item.ItemStack getStack();
 
@@ -21,8 +23,13 @@ public abstract class ItemEntityMixin {
             return;
         }
 
+        ItemEntity itemEntity = (ItemEntity) (Object) this;
+        if (itemEntity.getOwner() instanceof PlayerEntity && itemEntity.getItemAge() < PLAYER_DROPPED_STASH_DELAY_TICKS) {
+            return;
+        }
+
         if (ItemPickupStasher.stashIfInventoryCannotAccept(serverPlayer, getStack())) {
-            ((ItemEntity) (Object) this).discard();
+            itemEntity.discard();
             ci.cancel();
         }
     }

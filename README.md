@@ -4,6 +4,8 @@ Itemstash is a Minecraft Java Fabric mod for Minecraft 1.21.10 by Marfeyx.
 
 When an item would be picked up but the player's inventory has no free slot or matching stack space, the item is saved into a virtual stash instead of being lost on the ground. The stash is opened with a configurable keybind, shown in Minecraft's keybinds menu as **Open Itemstash**.
 
+Items intentionally dropped by a player are left on the ground at first. After 15 seconds, Itemstash can pick them up into the stash if the player's inventory is still full.
+
 The stash screen lists every stored item with its count and offers:
 
 - **Take Stack**: move one stack into the inventory when space is available.
